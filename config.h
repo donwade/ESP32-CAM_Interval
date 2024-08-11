@@ -9,7 +9,7 @@
 #define WITH_SLEEP
 
 // Enable Flash LED support
-#define WITH_FLASH
+//#define WITH_FLASH
 
 // Enable Camera Power down support
 // NOTE: This requires a modification on the AI-Thinker ESP32-CAM boards

@@ -25,6 +25,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#define CAMERA_MODEL_WROVER_KIT
+
 #include "config.h"
 
 #include "Arduino.h"
@@ -229,6 +232,7 @@ bool camera_init()
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
+
   //init with high specs to pre-allocate larger buffers
   if (psramFound()) {
     Serial.println("PSRAM found, using UXGA frame size");
@@ -240,6 +244,8 @@ bool camera_init()
     config.frame_size = FRAMESIZE_SVGA;
     config.jpeg_quality = 12;
     config.fb_count = 1;
+    config.fb_location = CAMERA_FB_IN_DRAM;    // dwade no psram
+    config.grab_mode = CAMERA_GRAB_WHEN_EMPTY; // dwade no psram
   }
 
   err = esp_camera_init(&config);

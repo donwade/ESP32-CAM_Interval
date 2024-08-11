@@ -30,7 +30,7 @@
 
 #include "camera_pins.h"
 
-#define LED_GPIO_NUM 33
+#define LED_GPIO_NUM 2      // classic blue led 33
 #define FLASH_GPIO_NUM 4
 #define CAM_PWR_GPIO_NUM 32
 #define BTN_GPIO_NUM 12

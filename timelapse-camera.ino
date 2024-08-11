@@ -40,6 +40,9 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
+#include "FS.h"
+#include "SPIFFS.h"
+
 // GPIO (rtc_gpio_hold_en())
 #include "driver/rtc_io.h"
 
@@ -115,10 +118,30 @@ void setup()
 #endif // WITH_SETUP_MODE_BUTTON
   }
 
+#if 0
   // Init SD Card
   if (!init_sdcard()) {
     goto fail;
   }
+#else
+
+/* You only need to format SPIFFS the first time you run a
+   test or else use the SPIFFS plugin to create a partition
+   https://github.com/me-no-dev/arduino-esp32fs-plugin */
+
+#define FORMAT_SPIFFS_IF_FAILED true
+
+  Serial.println("doing spiffs");
+  delay(3000);
+
+  if (!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)) {
+    Serial.println("SPIFFS Mount Failed");
+    return;
+  }
+  Serial.println("spiffs done");
+
+#endif
+
 
 #ifdef WITH_FLASH
   // WORKAROUND:
@@ -130,7 +153,7 @@ void setup()
   pinMode(FLASH_GPIO_NUM, OUTPUT);
   digitalWrite(FLASH_GPIO_NUM, LOW);
 #endif // WITH_FLASH
-  
+
   // TODO: error log to file?
 
   // Load config file
@@ -218,7 +241,7 @@ static bool init_sdcard()
     .max_files = 1,
   };
   sdmmc_card_t *card;
-  
+
 #ifndef WITH_SD_4BIT
   // Force host to 1-bit mode
   host.flags = SDMMC_HOST_FLAG_1BIT;
@@ -288,7 +311,7 @@ static bool init_capture_dir(bool reuse_last_dir)
   // Create new dir
   snprintf(capture_path, sizeof(capture_path),
 	"/sdcard/" CAPTURE_DIR_PREFIX "%04u", dir_idx);
-  
+
   if (!reuse_last_dir) {
     if (mkdir(capture_path, 0644) != 0) {
       Serial.print("Failed to create directory: ");
@@ -363,7 +386,7 @@ static void save_photo()
   }
 
   camera_fb_return(fb);
-  
+
   if (cfg.getEnableBusyLed()) {
     digitalWrite(LED_GPIO_NUM, HIGH);
   }
